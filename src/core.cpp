@@ -6,12 +6,13 @@
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 17:20:19 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/03/03 19:35:46 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 10:06:14 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "utils.hpp"
 #include "core.hpp"
+
 
 
 
@@ -116,6 +117,7 @@ if (!window)
     m_previous = GetTime();       // Get time as double
     Random_Seed(0);
 
+    render = new Render();
     (vsync==true)?SDL_GL_SetSwapInterval(1):SDL_GL_SetSwapInterval(0);
 
     return true;
@@ -186,6 +188,9 @@ bool App::ShouldClose()
 
 void App::Close()
 {
+    
+    delete render;
+
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
 }

@@ -6,7 +6,7 @@
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 13:23:53 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/03/03 20:36:36 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 11:57:17 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,7 +288,7 @@ void TextureCube::UnBind()
 //
 //*************************************************************************************************************
 
-Shader Shader::createSkyBox()
+Shader *Shader::createSkyBox()
 {
     const char *vertexShaderSource = R"(
     #version 320 es
@@ -330,14 +330,40 @@ Shader Shader::createSkyBox()
         
     
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
-    shader.setInt("skybox", 0);
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
+    shader->setInt("skybox", 0);
   
     return shader;
 }
-Shader Shader::createColor()
+Shader *Shader::createStencil()
+{
+     const char *vertexShaderSource = R"(
+    #version 320 es
+    precision mediump float;
+    layout (location = 0) in vec3 aPos;
+    void main()
+    {
+       gl_Position = vec4(aPos, 1.0);
+    }
+    )";
+
+    const char *fragmentShaderSource = R"(
+    #version 320 es
+    precision mediump float;
+    out vec4 FragColor;
+    void main()
+    {
+        FragColor = vec4(0.0, 0.0, 0.0, 0.4);
+    }
+    )";
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
+   return shader;
+}
+Shader *Shader::createColor()
 {
     const char *vertexShaderSource = R"(
     #version 320 es
@@ -372,14 +398,14 @@ Shader Shader::createColor()
         
     }
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
-    shader.setFloat4("color", 0.4, 0.4, 0.4, 1.0);
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
+    shader->setFloat4("color", 0.04f, 0.28f, 0.26f, 1.0f);
   
     return shader;
 }
-Shader Shader::createColorAmbientDiffuse()
+Shader *Shader::createColorAmbientDiffuse()
 {
         const char *vertexShaderSource = R"(
     #version 320 es
@@ -444,17 +470,17 @@ Shader Shader::createColorAmbientDiffuse()
         
     }
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
-    shader.setInt("tex",0);
-    shader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
-    shader.setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
+    shader->setInt("tex",0);
+    shader->setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
+    shader->setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
     return shader;
 }
 
-Shader Shader::createColorAmbientDiffuseSpecular()
+Shader *Shader::createColorAmbientDiffuseSpecular()
 {
         const char *vertexShaderSource = R"(
     #version 320 es
@@ -530,22 +556,22 @@ Shader Shader::createColorAmbientDiffuseSpecular()
         
     }
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
-    shader.setInt("tex",0);
-    shader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
-    shader.setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
-    shader.setFloat3("diffuseColor",  1.0f, 1.0f, 1.0f);
-    shader.setFloat3("specularColor", 1.0f, 1.0f, 1.0f);
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
+    shader->setInt("tex",0);
+    shader->setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
+    shader->setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
+    shader->setFloat3("diffuseColor",  1.0f, 1.0f, 1.0f);
+    shader->setFloat3("specularColor", 1.0f, 1.0f, 1.0f);
           
-    shader.setFloat("force",32.0f);
+    shader->setFloat("force",32.0f);
     return shader;
 }
 
 
-Shader Shader::createSolidAmbientDiffuseSpecular()
+Shader *Shader::createSolidAmbientDiffuseSpecular()
 {
         const char *vertexShaderSource = R"(
     #version 320 es
@@ -615,20 +641,20 @@ Shader Shader::createSolidAmbientDiffuseSpecular()
         
     }
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
 
-    shader.setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
-    shader.setFloat3("diffuseColor" ,  1.0f, 1.0f, 1.0f);
-    shader.setFloat3("specularColor", 1.0f, 1.0f, 1.0f);
-    shader.setFloat3("ambientColor" , 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
+    shader->setFloat3("diffuseColor" ,  1.0f, 1.0f, 1.0f);
+    shader->setFloat3("specularColor", 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("ambientColor" , 1.0f, 1.0f, 1.0f);
           
-    shader.setFloat("force",32.0f);
+    shader->setFloat("force",32.0f);
     return shader;
 }
 
-Shader Shader::createAmbientDiffuseSpecular()
+Shader *Shader::createAmbientDiffuseSpecular()
 {
         const char *vertexShaderSource = R"(
     #version 320 es
@@ -701,17 +727,17 @@ Shader Shader::createAmbientDiffuseSpecular()
         
     }
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
-    shader.setInt("tex",0);
-    shader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
-    shader.setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
-    shader.setFloat("force",32.0f);
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
+    shader->setInt("tex",0);
+    shader->setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
+    shader->setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("lightPos", 1.2f, 1.0f, 2.0f);
+    shader->setFloat("force",32.0f);
     return shader;
 }
-Shader Shader::createColorMaterial()
+Shader *Shader::createColorMaterial()
 {
         const char *vertexShaderSource = R"(
     #version 320 es
@@ -784,24 +810,24 @@ uniform Light light;
         FragColor = vec4(result, 1.0);
     }
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
 
-    shader.setFloat3("light.ambient", 1.0f, 1.0f, 1.0f);
-    shader.setFloat3("light.diffuse", 1.0f, 1.0f, 1.0f);
-    shader.setFloat3("light.specular", 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("light.ambient", 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("light.diffuse", 1.0f, 1.0f, 1.0f);
+    shader->setFloat3("light.specular", 1.0f, 1.0f, 1.0f);
 
     // material properties
-    shader.setFloat3("material.ambient", 1.0f, 0.5f, 0.31f);
-    shader.setFloat3("material.diffuse", 1.0f, 0.5f, 0.31f);
-    shader.setFloat3("material.specular", 0.5f, 0.5f, 0.5f); 
-    shader.setFloat("material.shininess", 32.0f);
+    shader->setFloat3("material.ambient", 1.0f, 0.5f, 0.31f);
+    shader->setFloat3("material.diffuse", 1.0f, 0.5f, 0.31f);
+    shader->setFloat3("material.specular", 0.5f, 0.5f, 0.5f); 
+    shader->setFloat("material.shininess", 32.0f);
     
     return shader;
 }
 
-Shader Shader::createTangentNormalMap()
+Shader *Shader::createTangentNormalMap()
 {
         const char *vertexShaderSource = R"(
     #version 320 es
@@ -898,12 +924,12 @@ uniform vec3 viewPos;
         
     }
     )";
-    Shader shader;
-    shader.create(vertexShaderSource,fragmentShaderSource);
-    shader.LoadDefaults();
-    shader.setInt("diffuseMap",0);
-    shader.setInt("normalMap",1);
-    shader.setFloat3("lightPos", 0.5f, 1.0f, 0.3f);
+    Shader *shader = new Shader();
+    shader->create(vertexShaderSource,fragmentShaderSource);
+    shader->LoadDefaults();
+    shader->setInt("diffuseMap",0);
+    shader->setInt("normalMap",1);
+    shader->setFloat3("lightPos", 0.5f, 1.0f, 0.3f);
     return shader;
 }
 bool Shader::create(const char* vShaderCode, const char* fShaderCode)
@@ -1409,7 +1435,7 @@ for (int i = 0; i < (int)vertices.size(); i++)
             surf->ComputeTangents();
         }
     }
-    void Mesh::Render(const Shader &shader)
+    void Mesh::Render(const Shader *shader)
       {
           for (int i = 0; i <(int) surfaces.size(); i++) 
           {
@@ -1419,9 +1445,9 @@ for (int i = 0; i < (int)vertices.size(); i++)
               {
               //  std::cout << surf->getMaterialIndex() << "  " <<(int)materials.size()  << std::endl;
                 Material * mat = materials[surf->getMaterialIndex()];
-                shader.setVector3("diffuseColor",  mat->difusse);
-                shader.setVector3("specularColor", mat->specular);
-                shader.setVector3("ambientColor", mat->ambient);
+                shader->setVector3("diffuseColor",  mat->difusse);
+                shader->setVector3("specularColor", mat->specular);
+                shader->setVector3("ambientColor", mat->ambient);
               }
             // 
               
@@ -2034,7 +2060,8 @@ Mesh *Mesh::CreateSphere(int segments)
 		}
 
 	}
-	thissurf->UpdateNormals();
+     thissurf->ComputeTangents();
+	 thissurf->UpdateNormals();
      thissurf->build();
 	return mesh;
 
@@ -2320,9 +2347,9 @@ for (int i = 0; i < major_segments; i++)
             int b=file.readInt();
             int c=file.readInt();
             if (invertZ)
-                surf->addFace(a,b,c);
-            else
                 surf->addFace(c,b,a);
+            else
+                surf->addFace(a,b,c);
 
 		 }
       
@@ -2552,7 +2579,6 @@ void ShadowMesh::renderVolume()
     if (!count)
         return;
 
-
     
 
 for (int i=0;i<count;i++)
@@ -2560,12 +2586,8 @@ for (int i=0;i<count;i++)
      const int points = ShadowVolumes[i].size();
      glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
      glBufferData(GL_ARRAY_BUFFER, points * sizeof(Vec3), ShadowVolumes[i].data(), GL_STATIC_DRAW);
-     
-     glBindBuffer(GL_ARRAY_BUFFER, VertexBufferID);
      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 );
      glDrawArrays(GL_TRIANGLES, 0, points);
-     
-
 }
 
 
@@ -2576,7 +2598,7 @@ for (int i=0;i<count;i++)
 void ShadowMesh::createShadowVolume()
 {
 
-  SShadowVolume* svp = 0;
+      SShadowVolume* svp = 0;
 	
 
 	// builds the shadow volume and adds it to the shadow volume list.
@@ -2586,7 +2608,7 @@ void ShadowMesh::createShadowVolume()
 		// get the next unused buffer
 
 		svp = &ShadowVolumes[ShadowVolumesUsed];
-		svp->clear();
+		svp->resize(0);
 	}
 	else
 	{
@@ -2634,7 +2656,8 @@ void ShadowMesh::createShadowVolume()
 int  ShadowMesh::createEdgesAndCaps( SShadowVolume* svp)
 {
      int numEdges=0;
-	const int faceCount = IndexCount / 3;
+	 const int faceCount = IndexCount / 3;
+    
 
 	
 
@@ -2654,18 +2677,15 @@ int  ShadowMesh::createEdgesAndCaps( SShadowVolume* svp)
 			lightDir0 = ld.normalized();
 		}
 
-		FaceData[i]=Triangle3d(v2,v1,v0).isFrontFacing(lightDir0);	// actually the back-facing polygons
-    //     FaceData[i]=Triangle3d(v0,v1,v2).isFrontFacing(lightDir0);
+	 	 
+         FaceData[i]=Triangle3d(v2,v1,v0).isFrontFacing(lightDir0);	// actually the back-facing polygons
+      //   FaceData[i]=Triangle3d(v0,v1,v2).isFrontFacing(lightDir0);
         
 
 
 
 		if (UseZFailMethod && FaceData[i])
 		{
-
-			//if (svp->size() <= 5)
-			//	Log(1,"Allocation too small.");
-
 			// add front cap from light-facing faces
 			svp->push_back(v2);
 			svp->push_back(v1);
@@ -2699,6 +2719,8 @@ int  ShadowMesh::createEdgesAndCaps( SShadowVolume* svp)
 			const unsigned short wFace1 = Indices[3*i+1];
 			const unsigned short wFace2 = Indices[3*i+2];
 
+                if (!isOptimize)
+                {
 				// add edge v0-v1
 				 Edges[2*numEdges+0] = wFace0;
 				 Edges[2*numEdges+1] = wFace1;
@@ -2713,39 +2735,39 @@ int  ShadowMesh::createEdgesAndCaps( SShadowVolume* svp)
 				 Edges[2*numEdges+0] = wFace2;
 				 Edges[2*numEdges+1] = wFace0;
 				 ++numEdges;
-			// }
-			// else
-			// {
+			}
+			else
+			{
 				const unsigned short adj0 = Adjacency[3*i+0];
 				const unsigned short adj1 = Adjacency[3*i+1];
 				const unsigned short adj2 = Adjacency[3*i+2];
 
-				// // add edges if face is adjacent to back-facing face
-				// // or if no adjacent face was found
-				// if (adj0 == i || FaceData[adj0] == false)
-				// {
-				// 	// add edge v0-v1
-				// 	Edges[2*numEdges+0] = wFace0;
-				// 	Edges[2*numEdges+1] = wFace1;
-				// 	++numEdges;
-				// }
+				// add edges if face is adjacent to back-facing face
+				// or if no adjacent face was found
+				if (adj0 == i || FaceData[adj0] == false)
+				{
+					// add edge v0-v1
+					Edges[2*numEdges+0] = wFace0;
+					Edges[2*numEdges+1] = wFace1;
+					++numEdges;
+				}
 
-				// if (adj1 == i || FaceData[adj1] == false)
-				// {
-				// 	// add edge v1-v2
-				// 	Edges[2*numEdges+0] = wFace1;
-				// 	Edges[2*numEdges+1] = wFace2;
-				// 	++numEdges;
-				// }
+				if (adj1 == i || FaceData[adj1] == false)
+				{
+					// add edge v1-v2
+					Edges[2*numEdges+0] = wFace1;
+					Edges[2*numEdges+1] = wFace2;
+					++numEdges;
+				}
 
-				// if (adj2 == i || FaceData[adj2] == false)
-				// {
-				// 	// add edge v2-v0
-				// 	Edges[2*numEdges+0] = wFace2;
-				// 	Edges[2*numEdges+1] = wFace0;
-				// 	++numEdges;
-				// }
-			
+				if (adj2 == i || FaceData[adj2] == false)
+				{
+					// add edge v2-v0
+					Edges[2*numEdges+0] = wFace2;
+					Edges[2*numEdges+1] = wFace0;
+					++numEdges;
+				}
+            }
 		}
 	}
 	return numEdges;
@@ -2754,50 +2776,54 @@ void ShadowMesh::calculateAdjacency()
 {
 	    AdjacencyDirtyFlag = false;
 
-	 	Adjacency.clear();
+         if (!isOptimize)
+         {
+             	Adjacency.clear();
+         } else
+         {
+            Adjacency.reserve(IndexCount);
 
-		Adjacency.reserve(IndexCount);
+            // go through all faces and fetch their three neighbours
+            for (int f=0; f<IndexCount; f+=3)
+            {
+                for (int edge = 0; edge<3; ++edge)
+                {
+                    Vec3& v1 = Vertices[Indices[f+edge]];
+                    Vec3& v2 = Vertices[Indices[f+((edge+1)%3)]];
 
-		// go through all faces and fetch their three neighbours
-		for (int f=0; f<IndexCount; f+=3)
-		{
-			for (int edge = 0; edge<3; ++edge)
-			{
-				Vec3& v1 = Vertices[Indices[f+edge]];
-				Vec3& v2 = Vertices[Indices[f+((edge+1)%3)]];
+                    // now we search an_O_ther _F_ace with these two
+                    // vertices, which is not the current face.
+                    int of;
 
-				// now we search an_O_ther _F_ace with these two
-				// vertices, which is not the current face.
-				int of;
+                    for (of=0; of<IndexCount; of+=3)
+                    {
+                        // only other faces
+                        if (of != f)
+                        {
+                            bool cnt1 = false;
+                            bool cnt2 = false;
 
-				for (of=0; of<IndexCount; of+=3)
-				{
-					// only other faces
-					if (of != f)
-					{
-						bool cnt1 = false;
-						bool cnt2 = false;
+                            for (int e=0; e<3; ++e)
+                            {
+                                if (v1.equals(Vertices[Indices[of+e]]))
+                                    cnt1=true;
 
-						for (int e=0; e<3; ++e)
-						{
-							if (v1.equals(Vertices[Indices[of+e]]))
-								cnt1=true;
+                                if (v2.equals(Vertices[Indices[of+e]]))
+                                    cnt2=true;
+                            }
+                            // one match for each vertex, i.e. edge is the same
+                            if (cnt1 && cnt2)
+                                break;
+                        }
+                    }
 
-							if (v2.equals(Vertices[Indices[of+e]]))
-								cnt2=true;
-						}
-						// one match for each vertex, i.e. edge is the same
-						if (cnt1 && cnt2)
-							break;
-					}
-				}
-
-				// no adjacent edges -> store face number, else store adjacent face
-				if (of >= IndexCount)
-					Adjacency[f + edge] = f/3;
-				else
-					Adjacency[f + edge] = of/3;
-			}
+                    // no adjacent edges -> store face number, else store adjacent face
+                    if (of >= IndexCount)
+                        Adjacency[f + edge] = f/3;
+                    else
+                        Adjacency[f + edge] = of/3;
+                }
+            }
 		}
 }
 void ShadowMesh::updateShadowVolumes()
@@ -2813,8 +2839,7 @@ void ShadowMesh::updateShadowVolumes()
 	if (!mesh)
 		return;
 
-	// create as much shadow volumes as there are lights but
-	// do not ignore the max light settings.
+
 	const int lightCount =1;
 	if (!lightCount)
 		return;
@@ -2841,7 +2866,7 @@ void ShadowMesh::updateShadowVolumes()
 	FaceData.reserve(totalIndices / 3);
 
 	// copy mesh
-	// (could speed this up for static meshes by adding some user flag to prevents copying)
+
 	for (i=0; i<bufcnt; ++i)
 	{
 		 Surface* buf = mesh->getSurface(i);
@@ -2860,90 +2885,525 @@ void ShadowMesh::updateShadowVolumes()
 	if (oldVertexCount != VertexCount || oldIndexCount != IndexCount || AdjacencyDirtyFlag)
 		calculateAdjacency();
 
-	
-  
-    
-
-
-    
-	
-
 	createShadowVolume();
-
-	
 }
-void ShadowMesh::render(const Mat4 &m, const Vec3 &light)
-{
-    m_light.set(light);
-    isDirectional=false;
 
-	Vec3 ldir;
-    ldir.set(m_light);
+void ShadowMesh::render(const Mat4 &m, const Vec3 &light,bool direction)
+{
+    //m_light.set(0.85, -1, -0.75);
+   // m_light.set(0.85,50.8,-20.75);
+   m_light.set(light);
+    
+    isDirectional=direction;
+
+
     
     if (isDirectional)
     {
        Mat4 transpose = m.transposed();
-       transpose.transformVect(ldir);
+      // transpose.transformVect(m_light);
        
     } else
     {
         Mat4 inverse =  m.inverted();
-        inverse.transformVect(ldir);
+     //   inverse.transformVect(m_light);
     }
     
      updateShadowVolumes();
 
-    //  glEnableVertexAttribArray(0);
-    //  renderVolume();
 
-//     bool drawShadow = false;
-    
-GLint cullFaceMode = 0;
-glGetIntegerv(GL_CULL_FACE_MODE, &cullFaceMode);
-GLint depthFunc = 0;
-glGetIntegerv(GL_DEPTH_FUNC, &depthFunc);
-GLboolean depthMask = 0;
-glGetBooleanv(GL_DEPTH_WRITEMASK, &depthMask);
+     
+ 
 
-//glEnable(GL_STENCIL_TEST);
-glEnableVertexAttribArray(0);
-//glEnable(GL_CULL_FACE);  
 
-UseZFailMethod=true;
-     renderVolume();       
-//     glEnableVertexAttribArray(0);
-    
-    // if (UseZFailMethod)
-	// 	{
-	// 		glCullFace(GL_FRONT);
-	// 		glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
-	// 		renderVolume();
+glStencilFunc( GL_ALWAYS, midStencilVal, 0xffffffff); // ~0 is like 0xFFFFFFFF Or something :P
+glStencilOp( GL_KEEP, GL_INCR_WRAP, GL_KEEP ); // incrementing on the depth fail
+glCullFace( GL_BACK   ); // cull front facing polys For this pass
 
-	// 		glCullFace(GL_BACK);
-	// 		glStencilOp(GL_KEEP, GL_DECR, GL_KEEP);
-    //         renderVolume();
-	// 	}
-	// 	else // zpass
-	// 	{
-	// 		glCullFace(GL_BACK);
-	// 		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    //         renderVolume();
+renderVolume();
 
-	// 		glCullFace(GL_FRONT);
-	// 		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
-    //         renderVolume();
-	// 	}
 
-glDisableVertexAttribArray(0);
-glBindBuffer(GL_ARRAY_BUFFER, 0);
-glDisable(GL_STENCIL_TEST);
-
-glEnable(GL_CULL_FACE);  
-glCullFace(GL_FRONT);
-glDisable(GL_CULL_FACE);  
-
-//glCullFace(cullFaceMode);
-glDepthFunc(depthFunc);
-glDepthMask(depthMask);
+// Render the shadow volume And decrement the stencil every where a back facing polygon is rendered.
+glStencilOp( GL_KEEP, GL_DECR_WRAP, GL_KEEP ); // decrementing on the depth fail
+glCullFace( GL_FRONT   ); // And now culling back facing polys
+renderVolume();
   
+}
+
+
+static Render *theInstance=nullptr;
+Render::Render():
+AlphaMode(GL_ALWAYS), AlphaRef(0.f), AlphaTest(false),FrameBufferCount(0), BlendEquation(0), BlendSourceRGB(0),
+		BlendDestinationRGB(0), BlendSourceAlpha(0), BlendDestinationAlpha(0), Blend(0), BlendEquationInvalid(false), BlendFuncInvalid(false), BlendInvalid(false),
+		ColorMask(0), ColorMaskInvalid(false), CullFaceMode(GL_BACK), CullFace(false), DepthFunc(GL_LESS), DepthMask(true), DepthTest(false), FrameBufferID(0),
+		ProgramID(0), ActiveTexture(GL_TEXTURE0), StencilTest(false)
+{
+         theInstance = this;
+
+	    BlendEquation = new GLenum[FrameBufferCount];
+		BlendSourceRGB = new GLenum[FrameBufferCount];
+		BlendDestinationRGB = new GLenum[FrameBufferCount];
+		BlendSourceAlpha = new GLenum[FrameBufferCount];
+		BlendDestinationAlpha = new GLenum[FrameBufferCount];
+		Blend = new bool[FrameBufferCount];
+		ColorMask = new unsigned char[FrameBufferCount];
+
+		// Initial OpenGL values from specification.
+
+
+			glBlendEquation(GL_FUNC_ADD);
+
+
+		for (int i = 0; i < FrameBufferCount; ++i)
+		{
+			BlendEquation[i] = GL_FUNC_ADD;
+
+			BlendSourceRGB[i] = GL_ONE;
+			BlendDestinationRGB[i] = GL_ZERO;
+			BlendSourceAlpha[i] = GL_ONE;
+			BlendDestinationAlpha[i] = GL_ZERO;
+
+			Blend[i] = false;
+			ColorMask[i] = ECP_ALL;
+		}
+
+glBlendFunc(GL_ONE, GL_ZERO);
+glDisable(GL_BLEND);
+glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+glCullFace(CullFaceMode);
+glDisable(GL_CULL_FACE);
+
+glDepthFunc(DepthFunc);
+glDepthMask(GL_TRUE);
+glDisable(GL_DEPTH_TEST);
+
+glActiveTexture(ActiveTexture);
+
+glDisable(GL_TEXTURE_2D);
+
+
+
+glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, DimAliasedLine);
+glGetFloatv(GL_ALIASED_POINT_SIZE_RANGE, DimAliasedPoint);
+glPixelStorei(GL_PACK_ALIGNMENT, 1);
+glClearDepthf(1.0f);
+glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
+glDepthFunc(GL_LEQUAL);
+
+
+
+
+   	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glClearDepthf(1.0);
+	glDepthFunc(GL_LEQUAL);
+	//glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_SCISSOR_TEST);
+	glEnable(GL_BLEND);
+    
+    glGetIntegerv(GL_STENCIL_BITS, &StencilBits);
+    midStencilVal = (StencilBits - 1)^2;
+    glClearStencil(midStencilVal);
+
+    glGenBuffers(1, &stencil_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, stencil_vbo);
+    GLfloat q3[] = {1,1,-1,1,-1,-1,1,-1};
+    glBufferData(GL_ARRAY_BUFFER,8*sizeof(float),q3,GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+  setDepthTest(true);
+  setCullFace(true);
+  setCullFaceFunc(GL_BACK);
+  setBlend(true);
+  
+    shader_quad = new Shader();
+    shader_solid= new Shader();
+    
+{
+      const char *vertexShaderSource = R"(
+    #version 320 es
+    precision mediump float;
+    layout (location = 0) in vec3 aPos;
+    void main()
+    {
+       gl_Position = vec4(aPos, 1.0);
+    }
+    )";
+
+    const char *fragmentShaderSource = R"(
+    #version 320 es
+    precision mediump float;
+    out vec4 FragColor;
+    void main()
+    {
+        FragColor = vec4(0.0, 0.0, 0.0, 0.4);
+    }
+    )";
+   
+    shader_quad->create(vertexShaderSource,fragmentShaderSource);
+    shader_quad->LoadDefaults();
+}
+ {
+    const char *vertexShaderSource = R"(
+    #version 320 es
+    precision mediump float;
+    layout (location = 0) in vec3 aPos;
+           
+    uniform mat4 model;
+    uniform mat4 view;
+    uniform mat4 projection;
+   
+
+
+    void main()
+    {
+       gl_Position = projection * view * model* vec4(aPos, 1.0);
+    }
+    )";
+
+    const char *fragmentShaderSource = R"(
+    #version 320 es
+    precision mediump float;
+    out vec4 FragColor;
+
+    uniform vec4 color;
+
+
+    void main()
+    {
+    
+    FragColor = color;
+      
+        
+    }
+    )";
+    shader_solid->create(vertexShaderSource,fragmentShaderSource);
+    shader_solid->LoadDefaults();
+    shader_solid->setFloat4("color", 0.04f, 0.28f, 0.26f, 1.0f);
+ }   
+    //  shader_solid= Shader::createColor();
+    //  shader_quad = Shader::createStencil();
+    
+    Log(0,"Create render");
+}
+Render::~Render()
+{
+       glDeleteBuffers(1, &stencil_vbo);
+        delete   [] BlendEquation;
+        delete   []		BlendSourceRGB;
+        delete   []BlendDestinationRGB;
+        delete   []BlendSourceAlpha;
+        delete   []BlendDestinationAlpha;
+        delete   []Blend;
+        delete   []ColorMask;
+        delete shader_quad;
+        delete shader_solid;
+        theInstance = nullptr;
+        Log(0,"Free render");
+
+}
+
+Render* Render::Instance()
+{
+      return theInstance;
+}
+
+
+void Render::setStencil(bool enable)
+{
+    if (StencilTest != enable)
+		{
+			if (enable)
+				glEnable(GL_STENCIL_TEST);
+			else
+				glDisable(GL_STENCIL_TEST);
+
+			StencilTest = enable;
+		}
+}
+void Render::setShaderPoint(const Mat4 &projection, const Mat4 &view,const Mat4 &model)
+{
+        shader_solid->Bind();
+        shader_solid->setMatrix4("view", view);
+        shader_solid->setMatrix4("projection" ,projection);
+        shader_solid->setMatrix4("model", model);
+        shader_solid->setFloat4("color",0.04f, 0.28f, 0.26f, 1.0f);
+}
+void Render::setShaderPoint(const Mat4 &projection, const Mat4 &view)
+{
+        shader_solid->Bind();
+        shader_solid->setMatrix4("view", view);
+        shader_solid->setMatrix4("projection" ,projection);
+}
+void Render::setShaderPoint(const Mat4 &model)
+{
+        shader_solid->Bind();
+        shader_solid->setMatrix4("model", model);
+}
+
+
+void Render::beginStencil()
+{
+      
+	glClearStencil(midStencilVal);
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glDepthMask(GL_FALSE);
+	glColorMask( GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE );
+	glEnable( GL_CULL_FACE );
+    glEnableVertexAttribArray(0);
+    setStencil(true);
+
+}
+void Render::endStencil()
+{
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
+	glStencilOp( GL_KEEP, GL_KEEP, GL_KEEP );
+	setStencil(false);
+    glDisableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+void Render::drawStencilShadow(bool clearStencilBuffer)
+{
+        shader_quad->Bind();
+         
+    	setBlend(true);
+		setBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		setStencil(true);
+        glCullFace(GL_BACK);
+        glStencilFunc(GL_NOTEQUAL, midStencilVal, 0xffffff);
+        glStencilOp(GL_KEEP , GL_KEEP , GL_KEEP);
+       
+       //render screen quad
+      
+        drawScreenQuad();
+
+
+        setStencil(false);
+    	if (clearStencilBuffer)
+    	   glClear(GL_STENCIL_BUFFER_BIT);
+           
+}
+
+void Render::drawScreenQuad()
+{
+    	
+       //render screen quad
+        glBindBuffer(GL_ARRAY_BUFFER, stencil_vbo);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(0);
+        glDrawArrays(GL_TRIANGLE_FAN,0,4);
+        glDisableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Render::setBlendEquation(GLenum mode)
+{
+if (BlendEquation[0] != mode || BlendEquationInvalid)
+{
+        glBlendEquation(mode);
+
+    for (GLuint i = 0; i < FrameBufferCount; ++i)
+        BlendEquation[i] = mode;
+
+    BlendEquationInvalid = false;
+}
+}
+void Render::setBlendFunc(GLenum source, GLenum destination)
+{
+    if (BlendSourceRGB[0] != source || BlendDestinationRGB[0] != destination ||
+			BlendSourceAlpha[0] != source || BlendDestinationAlpha[0] != destination ||
+			BlendFuncInvalid)
+		{
+			glBlendFunc(source, destination);
+
+			for (GLuint i = 0; i < FrameBufferCount; ++i)
+			{
+				BlendSourceRGB[i] = source;
+				BlendDestinationRGB[i] = destination;
+				BlendSourceAlpha[i] = source;
+				BlendDestinationAlpha[i] = destination;
+			}
+
+			BlendFuncInvalid = false;
+		}
+}
+void Render::setBlendFuncSeparate(GLenum sourceRGB, GLenum destinationRGB, GLenum sourceAlpha, GLenum destinationAlpha)
+{
+  if (sourceRGB != sourceAlpha || destinationRGB != destinationAlpha)
+		{
+			if (BlendSourceRGB[0] != sourceRGB || BlendDestinationRGB[0] != destinationRGB ||
+				BlendSourceAlpha[0] != sourceAlpha || BlendDestinationAlpha[0] != destinationAlpha ||
+				BlendFuncInvalid)
+			{
+                 glBlendFuncSeparate(sourceRGB, destinationRGB, sourceAlpha, destinationAlpha);
+
+				for (GLuint i = 0; i < FrameBufferCount; ++i)
+				{
+					BlendSourceRGB[i] = sourceRGB;
+					BlendDestinationRGB[i] = destinationRGB;
+					BlendSourceAlpha[i] = sourceAlpha;
+					BlendDestinationAlpha[i] = destinationAlpha;
+				}
+
+				BlendFuncInvalid = false;
+			}
+		}
+		else
+		{
+			setBlendFunc(sourceRGB, destinationRGB);
+		}  
+}
+
+void Render::setBlend(bool enable)
+{
+    if (Blend[0] != enable || BlendInvalid)
+		{
+			if (enable)
+				glEnable(GL_BLEND);
+			else
+				glDisable(GL_BLEND);
+
+			for (GLuint i = 0; i < FrameBufferCount; ++i)
+				Blend[i] = enable;
+
+			BlendInvalid = false;
+		}
+}
+
+
+// Color Mask.
+
+void Render::getColorMask(unsigned char& mask){mask = ColorMask[0];}
+void Render::setColorMask(unsigned char mask)
+{
+
+    if (ColorMask[0] != mask || ColorMaskInvalid)
+		{
+			glColorMask((mask & ECP_RED) ? GL_TRUE : GL_FALSE, (mask & ECP_GREEN) ? GL_TRUE : GL_FALSE, (mask & ECP_BLUE) ? GL_TRUE : GL_FALSE, (mask & ECP_ALPHA) ? GL_TRUE : GL_FALSE);
+
+			for (GLuint i = 0; i < FrameBufferCount; ++i)
+				ColorMask[i] = mask;
+
+			ColorMaskInvalid = false;
+		}
+}
+
+// Cull face calls.
+
+void Render::setCullFaceFunc(GLenum mode)
+{
+if (CullFaceMode != mode)
+		{
+			glCullFace(mode);
+			CullFaceMode = mode;
+		}
+    
+}
+void Render::setCullFace(bool enable)
+{
+    if (CullFace != enable)
+		{
+			if (enable)
+				glEnable(GL_CULL_FACE);
+			else
+				glDisable(GL_CULL_FACE);
+
+			CullFace = enable;
+		}
+}
+// Depth calls.
+
+void Render::setDepthFunc(GLenum mode)
+{
+    if (DepthFunc != mode)
+		{
+			glDepthFunc(mode);
+			DepthFunc = mode;
+		}
+}
+void Render::getDepthMask(bool& depth){    depth = DepthMask;}
+void Render::setDepthMask(bool enable)
+{
+    if (DepthMask != enable)
+		{
+			if (enable)
+				glDepthMask(GL_TRUE);
+			else
+				glDepthMask(GL_FALSE);
+
+			DepthMask = enable;
+		}
+}
+void Render::getDepthTest(bool& enable){enable = DepthTest;}
+void Render::setDepthTest(bool enable)
+{
+    if (DepthTest != enable)
+		{
+			if (enable)
+				glEnable(GL_DEPTH_TEST);
+			else
+				glDisable(GL_DEPTH_TEST);
+
+			DepthTest = enable;
+		}
+}
+
+
+void Render::setAlphaFunc(GLenum mode, GLclampf ref)
+{
+    if (AlphaMode != mode || AlphaRef != ref)
+	{
+//		glAlphaFunc(mode, ref);
+
+		AlphaMode = mode;
+		AlphaRef = ref;
+	}
+}
+void Render::setAlphaTest(bool enable)
+{
+    if (AlphaTest != enable)
+	{
+		// if (enable)
+		// 	glEnable(GL_ALPHA_TEST);
+		// else
+		// 	glDisable(GL_ALPHA_TEST);
+		AlphaTest = enable;
+	}
+    
+}
+
+void Render::getProgram(GLuint& programID) const
+{
+    programID = ProgramID;
+}
+
+void Render::setProgram(GLuint programID)
+{
+    if (ProgramID != programID)
+    {
+        glUseProgram(programID);
+        ProgramID = programID;
+    }
+}
+
+void Render::reset()
+{
+glUseProgram(0);
+glBindBuffer(GL_ARRAY_BUFFER, 0); 
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+glBindVertexArray(0);
+glDisableVertexAttribArray(0);
+glDisableVertexAttribArray(1);
+glDisableVertexAttribArray(2);
+glDisableVertexAttribArray(3);
+glDisableVertexAttribArray(4);
+glDisableVertexAttribArray(5);
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, 0);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, 0);
+    
 }

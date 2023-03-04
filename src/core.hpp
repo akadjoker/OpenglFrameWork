@@ -6,7 +6,7 @@
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 13:51:30 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/02/17 14:24:48 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 10:06:19 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "glad.h"
 #include "utils.hpp"
 #include "math.hpp"
-  
+#include "render.hpp"
 
 class Input
 {
@@ -88,6 +88,7 @@ class App
     private:
         SDL_Window *window;
         SDL_GLContext context;
+        Render *render;
         bool m_shouldclose;
         //time
         double m_current;                     // Current time measure

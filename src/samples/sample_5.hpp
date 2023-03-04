@@ -6,7 +6,7 @@
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 16:14:07 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/03/03 09:51:59 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 11:03:37 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ Texture2D texture_floor;//(64,64);
 texture_floor.Load("assets/grass_1024.jpg");
 
 //Mesh *mesh = Mesh::LoadMesh("assets/african_head.h3d");
-ModernMesh *mesh = ModernMesh::ImportOBJ("assets/african_head.obj");
+Mesh *mesh = Mesh::ImportOBJ("assets/african_head.obj");
 
 
 Mesh *sphere = Mesh::CreateSphere(12);

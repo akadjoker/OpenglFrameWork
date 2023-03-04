@@ -6,7 +6,7 @@
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 16:14:07 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/03/03 08:17:10 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 11:05:10 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ app.CreateWindow(screenWidth, screenHeight, "Vertex Texture Colored",false);
 Shader shader_solid=Shader::createColor();
 
 
-Shader shader=Shader::createAmbientDiffuseSpecular();
+Shader shader=Shader::createSolidAmbientDiffuseSpecular();
   
 //Shader shader=Shader::createSolidColorTexture();
 
@@ -70,7 +70,7 @@ Mesh *mesh = Mesh::LoadMesh("assets/bugatti.h3d",false);
 Mesh *viewer = Mesh::LoadMesh("assets/car_view.h3d",false);
 
 
-Mesh *sphere = Mesh::CreateSphere(Color( 1.0f, 1.0f, 1.0f),12);
+Mesh *sphere = Mesh::CreateSphere(12);
  
 //sphere.CreateSphere(1,32,32,Color(1,1,0));
 

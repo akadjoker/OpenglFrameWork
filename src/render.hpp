@@ -6,7 +6,7 @@
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 17:25:56 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/03/03 19:44:40 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 11:53:54 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,6 +235,7 @@ class Shader
     
     void Bind() 
     { 
+    
         glUseProgram(m_program); 
     }
     void unBind() 
@@ -278,19 +279,20 @@ class Shader
     { 
         glUniformMatrix4fv(glGetUniformLocation(m_program, name.c_str()), 1 , transpose,value); 
     }
-    void setMatrix4(const std::string &name, Mat4 mat, GLboolean transpose = GL_FALSE) const
+    void setMatrix4(const std::string &name,const Mat4 &mat, GLboolean transpose = GL_FALSE) const
     { 
        setMatrix(name, mat.x, transpose); 
     }
     
-    static Shader createColor();
-    static Shader createAmbientDiffuseSpecular();
-    static Shader createColorAmbientDiffuse();
-    static Shader createColorAmbientDiffuseSpecular();
-    static Shader createColorMaterial();
-    static Shader createSkyBox();
-    static Shader createSolidAmbientDiffuseSpecular();
-    static Shader createTangentNormalMap();
+    static Shader *createStencil();
+    static Shader *createColor();
+    static Shader *createAmbientDiffuseSpecular();
+    static Shader *createColorAmbientDiffuse();
+    static Shader *createColorAmbientDiffuseSpecular();
+    static Shader *createColorMaterial();
+    static Shader *createSkyBox();
+    static Shader *createSolidAmbientDiffuseSpecular();
+    static Shader *createTangentNormalMap();
 
     bool create(const char* vShaderCode, const char* fShaderCode);
     void printData();
@@ -594,6 +596,125 @@ struct Vertex
  
 };
 
+	enum E_COLOR_PLANE
+	{
+		//! No color enabled
+		ECP_NONE=0,
+		//! Alpha enabled
+		ECP_ALPHA=1,
+		//! Red enabled
+		ECP_RED=2,
+		//! Green enabled
+		ECP_GREEN=4,
+		//! Blue enabled
+		ECP_BLUE=8,
+		//! All colors, no alpha
+		ECP_RGB=14,
+		//! All planes enabled
+		ECP_ALL=15
+	};
+    
+class Render
+{
+    public:
+        static Render* Instance();
+         Render();
+         ~Render();
+
+
+    void setBlendEquation(GLenum mode);
+	void setBlendFunc(GLenum source, GLenum destination);
+	void setBlendFuncSeparate(GLenum sourceRGB, GLenum destinationRGB, GLenum sourceAlpha, GLenum destinationAlpha);
+	void setBlend(bool enable);
+
+    void reset();
+
+	void setStencil(bool enable);
+	void beginStencil();
+	void endStencil();
+    void drawStencilShadow(bool clearStencilBuffer=true);
+
+
+	// Color Mask.
+
+	void getColorMask(unsigned char& mask);
+	void setColorMask(unsigned char mask);
+
+	// Cull face calls.
+
+	void setCullFaceFunc(GLenum mode);
+	void setCullFace(bool enable);
+	// Depth calls.
+
+	void setDepthFunc(GLenum mode);
+	void getDepthMask(bool& depth);
+	void setDepthMask(bool enable);
+    void getDepthTest(bool& enable);
+	void setDepthTest(bool enable);
+
+    void drawScreenQuad();
+
+    void setAlphaFunc(GLenum mode, GLclampf ref);
+    void setAlphaTest(bool enable);
+
+    void getProgram(GLuint& programID) const;
+    void setProgram(GLuint programID);
+
+//for render shadw volume
+    void setShaderPoint(const Mat4 &proj, const Mat4 &view,const Mat4 &model);
+    void setShaderPoint(const Mat4 &proj, const Mat4 &view);
+    void setShaderPoint( const Mat4 &model);
+
+    private:
+    GLuint stencil_vbo;
+    int midStencilVal;
+    int StencilBits;
+
+    float DimAliasedLine[2];
+    float DimAliasedPoint[2];
+    GLenum AlphaMode;
+    GLclampf AlphaRef;
+    bool AlphaTest;
+    GLenum MatrixMode;
+    GLenum ClientActiveTexture;
+
+    Shader *shader_solid;
+    Shader *shader_quad;
+
+
+	GLuint FrameBufferCount;
+
+	GLenum* BlendEquation;
+	GLenum* BlendSourceRGB;
+	GLenum* BlendDestinationRGB;
+	GLenum* BlendSourceAlpha;
+	GLenum* BlendDestinationAlpha;
+	bool* Blend;
+	bool BlendEquationInvalid;
+	bool BlendFuncInvalid;
+	bool BlendInvalid;
+
+
+	unsigned char* ColorMask;
+	bool ColorMaskInvalid;
+
+	GLenum CullFaceMode;
+	bool CullFace;
+
+	GLenum DepthFunc;
+	bool DepthMask;
+	bool DepthTest;
+	bool StencilTest;
+    
+
+	GLuint FrameBufferID;
+
+	GLuint ProgramID;
+
+	GLenum ActiveTexture;
+	GLenum CurrTexture;
+};
+
 class Mesh;
 
 
@@ -755,7 +876,7 @@ void Clear();
 void Build();
 void UpdateNormals();
 void ComputeTangents();
-void Render(const Shader &shader);
+void Render(const Shader *shader);
 int             getMaterialIndex(int id);
 std::string     getName(int id) const;
 void            setMaterialIndex(int id,int mat);
@@ -791,31 +912,28 @@ static Mesh* ImportOBJ(const std::string &filename);
 class ShadowMesh 
 {
     public:
-        ShadowMesh(Mesh *m, bool zfailmethod=true, float infinity=100000.0f):
+        ShadowMesh(Mesh *m, bool zfailmethod=true, float infinity=100.0f):
         m_mesh(m),AdjacencyDirtyFlag(true),	 IndexCount(0), VertexCount(0), ShadowVolumesUsed(0),	Infinity(infinity), UseZFailMethod(zfailmethod)
         {
-            glGenBuffers(1, &VertexBufferID);
-
 
             int StencilBits;
             glGetIntegerv(GL_STENCIL_BITS, &StencilBits);
             midStencilVal = (StencilBits - 1)^2;
-            glClearStencil(midStencilVal);
-
-            glGenBuffers(1, &stencil_vbo);
-            glBindBuffer(GL_ARRAY_BUFFER, stencil_vbo);
-            GLfloat q3[] = {1,1,-1,1,-1,-1,1,-1};
-            glBufferData(GL_ARRAY_BUFFER,8*sizeof(float),q3,GL_STATIC_DRAW);
+            
+            glGenBuffers(1, &VertexBufferID);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+          
         
         }
         ~ShadowMesh()
         {
             glDeleteBuffers(1, &VertexBufferID);
-            glDeleteBuffers(1, &stencil_vbo);
+   
         }
 
-        void render(const Mat4 &m, const Vec3 &light);
+        void render(const Mat4 &m, const Vec3 &light,bool direction=true);
         
     private:
            typedef std::vector<Vec3> SShadowVolume;
@@ -840,6 +958,7 @@ class ShadowMesh
         Vec3 m_light;
         bool isDirectional{false};
 		bool AdjacencyDirtyFlag;
+        bool isOptimize {true};
        
 
 
@@ -849,11 +968,11 @@ class ShadowMesh
 		int ShadowVolumesUsed;
 
         unsigned int VertexBufferID;
-        GLuint stencil_vbo;
-        
+     
+            int midStencilVal;
 		float Infinity;
 		bool UseZFailMethod;
-		int midStencilVal;
+	
 		
         
     

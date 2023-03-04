@@ -6,7 +6,7 @@
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/14 17:25:34 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/03/03 17:41:34 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 10:48:35 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1343,15 +1343,13 @@ public:
 
 	void transformVect( Vec3& vect) const
 	{
-		float vector[3];
 
-		vector[0] = vect.x*x[0] + vect.y*x[4] + vect.z*x[8] + x[12];
-		vector[1] = vect.x*x[1] + vect.y*x[5] + vect.z*x[9] + x[13];
-		vector[2] = vect.x*x[2] + vect.y*x[6] + vect.z*x[10] + x[14];
 
-		vect.x = vector[0];
-		vect.y = vector[1];
-		vect.z = vector[2];
+		vect.x = vect.x*x[0] + vect.y*x[4] + vect.z*x[8] + x[12];
+		vect.y = vect.x*x[1] + vect.y*x[5] + vect.z*x[9] + x[13];
+		vect.z = vect.x*x[2] + vect.y*x[6] + vect.z*x[10] + x[14];
+
+	
 	}
 	// ---------------------
 	// Matrix multiplication
@@ -1686,7 +1684,7 @@ struct Triangle3d
 		{
 			const Vec3 n = getNormal().normalized();
 			const float d = (float)n.dot(lookDirection);
-			return d;
+			return (d>0.0f);
 		}
 		Vec3 getNormal() const
 		{

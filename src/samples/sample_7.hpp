@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sample_6.hpp                                       :+:      :+:    :+:   */
+/*   sample_7.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lrosa-do <lrosa-do@student.42lisboa>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 16:14:07 by lrosa-do          #+#    #+#             */
-/*   Updated: 2023/03/04 12:00:01 by lrosa-do         ###   ########.fr       */
+/*   Updated: 2023/03/04 11:19:27 by lrosa-do         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,13 @@ int run_sample()
 App app;
 app.CreateWindow(screenWidth, screenHeight, "Vertex Texture Colored",false);
 
-Shader *shader_solid=Shader::createColor();
+Shader shader_solid=Shader::createColor();
 
 
-Shader *shader=Shader::createColorAmbientDiffuse();
+Shader shader=Shader::createSolidAmbientDiffuseSpecular();
 
 
-Shader *normal_shader=Shader::createTangentNormalMap();
+Shader normal_shader=Shader::createTangentNormalMap();
   
 //Shader shader=Shader::createSolidColorTexture();
 
@@ -60,51 +60,32 @@ texture_floor.Load("assets/grass_1024.jpg");
 //Mesh *mesh = Mesh::LoadMesh("assets/african_head.h3d");
 
 //ModernMesh *mesh = ModernMesh::ImportMesh(Mesh::CreateCube(1,1,1),true);
-Mesh *mesh = Mesh::ImportOBJ("assets/african_head.obj");
+//Mesh *mesh = Mesh::ImportOBJ("assets/african_head.obj");
+Mesh *mesh = Mesh::LoadMesh("assets/bugatti.h3d",false);
+Mesh *viewer = Mesh::LoadMesh("assets/car_view.h3d",false);
 
-ShadowMesh *shadow = new ShadowMesh(mesh);
+
+//Mesh *mesh = Mesh::CreateCube(1,1,1);
+
+
+//ShadowMesh *shadow = new ShadowMesh(mesh);
 
 Mesh *sphere = Mesh::CreateSphere(12);
  
-
-Mesh *plane=Mesh::CreateHills(Vec2(5,5),10,10,0.2,Vec2(5,5),Vec2(8,8));
-
-// //Shader shader_color = Shader::createColor();
-// Shader shader_quad=Shader::createStencil();
-
-
   
  
    Mat4 projection = Mat4::ProjectionMatrix(45.0f,  static_cast<float>(screenWidth) / screenHeight, 0.1f, 1000.0f);
     
 
 glClearColor(0.1,0.1,0.3f,1.0);
-// glEnable(GL_DEPTH_TEST);  
-// glEnable(GL_BLEND);
-// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-// // glEnable(GL_STENCIL_TEST);    
-// // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  
-// glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-// //glFrontFace(GL_CW);
-// //glEnable(GL_CULL_FACE);  
-// //  //  glCullFace(GL_FRONT);
-// // 	glEnable(GL_DEPTH_TEST);
-// // 	glDepthMask(GL_TRUE);
-// // 	glClearDepthf(1.0);
-// // 	glDepthFunc(GL_LEQUAL);
-// // 	//glDepthFunc(GL_LESS);
-// // 	glEnable(GL_CULL_FACE);
-// // 	glEnable(GL_SCISSOR_TEST);
-// // 	glEnable(GL_BLEND);
-// //   glFrontFace(GL_CW);
-// //   glEnable(GL_DEPTH_TEST);
-// //   glDepthFunc(GL_LESS);
-// glEnable(GL_STENCIL_TEST);
-// glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-// glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); 
+  // glEnable(GL_DEPTH_TEST);  
+  // glEnable(GL_BLEND);
+  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+   //glEnable(GL_CULL_FACE);  
+   //glCullFace(GL_FRONT);
 
-
-    
+  
+       
 int frameCount = 0;
 Uint32 startTime = SDL_GetTicks();
 
@@ -115,7 +96,7 @@ Vec3 ligth_pos(1.2f, 1.0f, 2.0f);
   {
        
        float deltaTime =  app.GetFrameTime();
-       double timer =app.GetTime() /10;
+       double timer =app.GetTime();
 
         
  
@@ -141,14 +122,14 @@ Vec3 ligth_pos(1.2f, 1.0f, 2.0f);
             camera.ProcessMouseMovement(MouseX, -MouseY);
         } 
  
-     ligth_pos.x=0 + sinf(timer/2 *PI) *5.5f;
-     ligth_pos.z=0 + cosf(timer/2 *PI) *5.5f;
-   
-             
+  
+         
+               ligth_pos.x = 1.0f + sin(timer) * 2.0f;
+               ligth_pos.z = sin(timer / 2.0f) * 1.0f;
+     
        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-       
+
 
         Mat4 view =camera.GetViewMatrix();
   
@@ -157,63 +138,34 @@ Vec3 ligth_pos(1.2f, 1.0f, 2.0f);
 
 
 
-        Mat4 model= Mat4::Identity();// * Mat4::Scale(0.8f,0.8f,0.8f);
-
-Render * render = Render::Instance();
-
-
         
-//floor
-        shader->Bind();
-        model= Mat4::Translate(0,-0.8f,0);
-        shader->setMatrix4("model", model);
-        shader->setMatrix4("view", view);
-        shader->setMatrix4("projection" ,projection);
-        shader->setVector3("lightPos",ligth_pos);
-        texture_floor.Bind(0);
-        plane->Render(shader);
-      
-
-
-
+        Mat4 model= Mat4::Identity();
+        shader.Bind();
+        shader.setMatrix4("view", view);
+        shader.setMatrix4("projection" ,projection);
+        shader.setMatrix4("model", model);
+        shader.setVector3("viewPos",camera.Position);
+        shader.setVector3("lightPos",ligth_pos);
+        viewer->Render(shader);
+        model =Mat4::Translate(Vec3(0,-0.5f,0)) * Mat4::Scale(0.5f,0.5f,0.5f);
+        shader.setMatrix4("model", model);
+        mesh->Render(shader);
         
-        Mat4 m = Mat4::Translate(0,0,0);
-        normal_shader->Bind();
-        normal_shader->setMatrix4("model", m);
-        normal_shader->setMatrix4("view", view);
-        normal_shader->setMatrix4("projection" ,projection);
-        normal_shader->setVector3("lightPos",ligth_pos);
-        text_mesh.Bind(0);
-        text_normal_mesh.Bind(1);
-        mesh->Render(normal_shader);
-
-
-
-
-
-
    
       
         
 
-//sphere light
+        
+   
+//sphe re light
         model= Mat4::Translate(ligth_pos) * Mat4::Scale(0.2f,0.2f,0.2f);
-        shader_solid->Bind();
-        shader_solid->setMatrix4("view", view);
-        shader_solid->setMatrix4("projection" ,projection);
-        shader_solid->setMatrix4("model", model);
-        shader_solid->setFloat4("color",1.0f, 1.0f, 1.0f,1.0f);
+        shader_solid.Bind();
+        shader_solid.setMatrix4("view", view);
+        shader_solid.setMatrix4("projection" ,projection);
+        shader_solid.setFloat4("color",1.0f, 1.0f, 1.0f,1.0f);
+        shader_solid.setMatrix4("model", model);
         sphere->Render(shader_solid);
-        
 
-
-        model= Mat4::Translate(0,0,0);
-        render->setShaderPoint(projection, view, model);
-        render->beginStencil();
-        shadow->render(model,ligth_pos,false);
-        render->endStencil();
-        render->drawStencilShadow(true);
-        
 
         
         app.Swap();
@@ -236,12 +188,8 @@ Render * render = Render::Instance();
 
 delete mesh;
 delete sphere;
-delete plane;
-delete shadow;
+delete viewer;
 
-delete shader_solid;
-delete shader;
-delete normal_shader;
 
     
   std::cout<<"Exit"<<std::endl;
